@@ -1,0 +1,143 @@
+Safe Code Executor - Learning Project
+
+This project is a **Safe Python Code Executor** built using Docker and a simple API (Flask/Express). Users can submit Python code, and the API runs it securely inside a sandboxed Docker container.
+
+---
+
+ Project UI
+
+Below is a preview of the UI used to run Python code:
+
+
+
+---
+
+What This Project Does
+
+* Takes Python code as input
+* Executes it inside a Docker container
+* Returns the output safely
+* Prevents basic attacks using Docker security features
+
+---
+ Features Implemented
+
+ **1. Basic Execution**
+
+* Endpoint: `POST /run`
+* Body:
+
+```json
+{ "code": "print(2 + 2)" }
+```
+
+* Response:
+
+```json
+{ "output": "4" }
+```
+
+**2. Safety Measures**
+
+The container is locked down with:
+
+| Protection             | Method                                      |
+| ---------------------- | ------------------------------------------- |
+| Infinite loops         | Timeout with `--timeout 10`                 |
+| High memory use        | Limit container memory with `--memory=128m` |
+| Internet blocking      | Run container with `--network none`         |
+| File system protection | Use `--read-only`                           |
+
+**3. Security Experiments Performed**
+
+* Reading `/etc/passwd`
+* Writing to `/tmp`
+* Heavy memory allocation
+* Infinite loop test
+
+Included in the documentation below.
+
+---
+
+Project Structure
+
+```
+project/
+│── api/
+│   ├── main.py (Flask API)
+│   ├── executor.py
+│   └── Dockerfile
+│
+│── web/
+│   ├── index.html
+│   └── script.js
+│
+│── README.md (this file)
+```
+
+---
+
+How to Run the Project
+
+**1. Start API**
+
+```bash
+docker build -t code-executor .
+docker run -p 5000:5000 code-executor
+```
+
+**2. Open UI**
+
+Open `index.html` in your browser.
+
+---
+
+Test Samples
+
+Works correctly:
+
+```
+print("Hello")
+x = 5 + 3; print(x)
+for i in range(5): print(i)
+```
+ Safety Tests:
+
+```
+while True: pass
+```
+
+Expected → Timeout error
+
+```
+x = "a" * 1000000000
+```
+
+Expected → Memory error
+
+```
+import requests
+requests.get("http://example.com")
+```
+
+Expected → Network blocked
+
+---
+What I Learned
+
+* How Docker isolates execution
+* How to prevent malicious code
+* What Docker cannot protect against
+* How to document a technical project clearly
+
+---
+
+Final Deliverables
+
+* Fully working API
+* Safe Docker execution environment
+* Simple frontend UI
+* Detailed documentation (this README)
+
+---
+
